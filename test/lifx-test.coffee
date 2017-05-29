@@ -24,6 +24,7 @@ describe 'lifx lights', ->
           {
             label: 'Hallway Light',
             power: "on",
+            connected: true,
             group: {
               id: "0",
               name: "Hallway"
@@ -32,6 +33,7 @@ describe 'lifx lights', ->
           {
             label: 'Lounge Light',
             power: "on",
+            connected: true,
             group: {
               id: "1",
               name: "Lounge"
@@ -40,9 +42,19 @@ describe 'lifx lights', ->
           {
             label: 'Lounge Lamp',
             power: "off",
+            connected: true,
             group: {
               id: "1",
               name: "Lounge"
+            }
+          },
+          {
+            label: 'Office Light',
+            power: "off",
+            connected: false,
+            group: {
+              id: "2",
+              name: "Office"
             }
           }
         ]
@@ -81,12 +93,14 @@ describe 'lifx lights', ->
         [
           'hubot',
           '@alice '+
-            '...Found 3 *light(s)* you requested:\n\n' +
+            '...Found 4 *light(s)* you requested:\n\n' +
             ' *Hallway*:\n' +
             '   :white_circle: *Hallway Light*\n\n' +
             ' *Lounge*:\n' +
             '   :white_circle: *Lounge Light*\n' +
-            '   :black_circle: Lounge Lamp'
+            '   :black_circle: Lounge Lamp\n\n' +
+            ' *Office*:\n' +
+            '   :red_circle: Office Light'
         ]
       ]
 
@@ -101,6 +115,7 @@ describe 'lifx lights', ->
               {
                 'label': 'Hallway Light',
                 'power': 'on',
+                'connected': true,
                 'group': {
                   'id': "0",
                   'name': "Hallway"
@@ -115,6 +130,7 @@ describe 'lifx lights', ->
               {
                 'label': 'Lounge Light',
                 'power': 'on',
+                'connected': true,
                 'group': {
                   'id': "1",
                   'name': "Lounge"
@@ -123,16 +139,32 @@ describe 'lifx lights', ->
               {
                 'label': 'Lounge Lamp',
                 'power': 'off',
+                'connected': true,
                 'group': {
                   'id': "1",
                   'name': "Lounge"
                 }
               }
             ]
+          },
+          'Office': {
+            'name': 'Office',
+            'id': "2",
+            'lights': [
+              {
+                'label': 'Office Light',
+                'power': "off",
+                'connected': false,
+                'group': {
+                  'id': "2",
+                  'name': "Office"
+                }
+              }
+            ]
           }
         }
       )
-      expect(room.robot.brain.lifx.num).to.eq(3)
+      expect(room.robot.brain.lifx.num).to.eq(4)
 
   context 'user asks hubot to change light state', ->
     it 'should set the light state to on', ->

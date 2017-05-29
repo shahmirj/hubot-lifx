@@ -43,7 +43,7 @@ module.exports = (robot) ->
     robot.brain.lifx.num = body.length
     robot.brain.context = 'lights'
 
-  robot.respond /lights?/i, (res) ->
+  robot.respond /(show )?lights?/i, (res) ->
     # Go to the API and return all the lights currently set
     # in the system
 
@@ -66,14 +66,16 @@ module.exports = (robot) ->
         for key, group of robot.brain.lifx.lights
           text.push "\n *" + group.name + "*:"
           for light in group.lights
-            if light.power == "off"
+            if light.connected == false
+              text.push "   :red_circle: " + light.label
+            else if light.power == "off"
               text.push "   :black_circle: " + light.label
             else
               text.push "   :white_circle: *" + light.label + "*"
 
         res.reply "...Found " + robot.brain.lifx.num + " *light(s)* you requested:\n" + text.join("\n")
 
-  robot.respond /turn (.*) (on|off)/i, (res) ->
+  robot.respond /(?:turn )?(.*) (on|off)$/i, (res) ->
     #console.log(res.match[1], res.match[2])
     send_the_response = (res) ->
       for key,group of robot.brain.lifx.lights
@@ -103,7 +105,7 @@ module.exports = (robot) ->
     else
       send_the_response(res)
 
-  robot.respond /show scenes?/i, (res) ->
+  robot.respond /(?:show )?scenes?/i, (res) ->
     # No token found, bomb out and let the user know
     unless process.env.HUBOT_LIFX_TOKEN?
       res.reply "Sorry no scenes are set, *token required!*"
@@ -122,7 +124,7 @@ module.exports = (robot) ->
         res.reply "...Found *" + text.length + "* scene(s):\n" +
             text.join("\n")
 
-  robot.respond /set scenes? (.*)$/i, (res) ->
+  robot.respond /(?:set )?scenes? (.*)$/i, (res) ->
     send_the_response = (res) ->
       for scene in robot.brain.lifx.scenes
         regex = new RegExp("#{res.match[1]}", "i")
